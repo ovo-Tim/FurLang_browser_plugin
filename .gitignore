@@ -25,5 +25,5 @@ web-ext.config.ts
 *.sln
 *.sw?
 
-entrypoints/panel_dist
+public/panel_dist
 .vscode

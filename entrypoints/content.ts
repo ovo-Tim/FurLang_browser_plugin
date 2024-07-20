@@ -1,6 +1,6 @@
 import { ref } from "vue";
 import axios, { Axios } from "axios";
-import { rgb, hex } from "color-convert";
+import { hex } from "color-convert";
 
 const default_vars = {
   "colors": ['#66bdff', '#ffb142'],
@@ -14,10 +14,13 @@ declare global {
     axios_instance: Axios;
     marked: boolean;
     panel: string;
+    opening_panel: HTMLIFrameElement|undefined;
+    ip_addr: string;
   }
 }
 
 interface wordInfo{
+  'word': string, // lemmatized word
   'frequency': number,
   'familiarity': number,
   'sentences': string[],
@@ -49,6 +52,7 @@ function gradientColors(colors: string[], transparency_change: boolean, step: nu
 
 async function start(){
   let settings = await load_sets();
+  window.ip_addr = settings.ip_addr.value;
 
   window.axios_instance = axios.create({
     baseURL: "http://" + settings.ip_addr.value
@@ -81,7 +85,7 @@ async function start(){
 async function mark(tag:HTMLElement, colors: string[], transparency_change: boolean){
   const words = await FurPost('get', tag.innerText) as [[string, wordInfo]];
   for (let i = 0; i < words.length; i++){
-    console.log("Marking: ", words[i]);
+    // console.log("Marking: ", words[i]);
     highlight(tag, words[i], colors, transparency_change);
   }
 }
@@ -92,26 +96,50 @@ function highlight(tag: HTMLElement, val: [string, wordInfo], colors: string[],t
   let txt = val[0];
   let re = new RegExp(txt, 'g');
   let newHtml = htmls.replace(re,
-    `<mark class="FurMark" style="
+    `<mark class="FurMark_${txt}" style="
     background-color: rgba(${gradientColors(colors, transparency_change, val[1].familiarity)});
-    position: relative
     ">${txt}</mark>`);
   tag.innerHTML = newHtml;
   // console.log(newHtml);
-  insert_panel(tag, val);
+
+  const marks = tag.getElementsByClassName("FurMark_" + txt);
+  for (let i = 0; i < marks.length; i++){
+    marks[i].addEventListener('mouseover', () => {
+      console.log(val[1]);
+      FurPost('get_info', val[1].word).then((info)=>{
+        insert_panel(marks[i] as HTMLElement, info);
+      });
+
+    });
+  }
 }
 
-function insert_panel(element: HTMLElement, info: [string, wordInfo]){
+function insert_panel(element: HTMLElement, info: wordInfo){
+  if (window.opening_panel != undefined){
+    window.opening_panel.remove();
+  }
   const panel = document.createElement('iframe');
+  const rect = element.getBoundingClientRect();
+  window.opening_panel = panel;
   panel.src = window.panel;
-  panel.style.position = 'absolute';
-  panel.style.top = '1.5em';
-  panel.style.left = '5em';
-  element.appendChild(panel);
-  // panel.onload = () => panel.contentWindow?.setup(info, "");
 
-  element.addEventListener("mouseover", function(){
-    // panel.contentWindow?.show();
+  panel.style.position = 'absolute';
+  panel.style.overflow = 'hidden';
+  panel.style.width = '46em';
+  panel.style.height = '28em';
+  panel.style.zIndex = '999';
+  panel.style.border = '0.18em solid skyblue';
+  panel.style.borderRadius = '1em';
+  panel.style.top = `${rect.y + window.scrollY + element.offsetHeight}px`;
+  panel.style.left = `${rect.left + window.scrollX}px`;
+  document.body.appendChild(panel);
+
+  panel.onload = () => panel.contentWindow?.postMessage(['setup', info, window.ip_addr], '*');
+
+
+  panel.addEventListener('mouseleave', () => {
+    window.opening_panel = undefined;
+    panel.remove();
   });
 }
 
@@ -184,6 +212,8 @@ async function FurPost(type: string, data: any){
     return res;
   }catch(e){
     console.log("Post error: ", e)
+    console.log("Data:", data);
+
   }
 }
 
@@ -193,7 +223,7 @@ export default defineContentScript({
     console.log('FurLang content launch!');
 
     window.marked = false;
-    window.panel = browser.runtime.getURL("panel_dist.html");
+    window.panel = browser.runtime.getURL("panel_dist/index.html");
     console.log("Panel: ", window.panel);
 
 
