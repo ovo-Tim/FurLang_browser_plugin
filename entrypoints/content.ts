@@ -82,30 +82,43 @@ async function start(){
   console.log("Marked in ", Date.now() - ms);
 }
 
+function replaceTextInHTML(html:string, search:string, replacement:string) {
+  const regex = new RegExp('(?<!<[^>]*?)' + search + '(?!([^<]*?>)|(<[^>]*?>))', 'gi');
+  return html.replace(regex, replacement);
+}
+
 async function mark(tag:HTMLElement, colors: string[], transparency_change: boolean){
   const words = await FurPost('get', tag.innerText) as [[string, wordInfo]];
   for (let i = 0; i < words.length; i++){
     // console.log("Marking: ", words[i]);
     highlight(tag, words[i], colors, transparency_change);
   }
+  for (let i = 0; i < words.length; i++){
+    insert_panels(tag, words[i]);
+  }
 }
 
 function highlight(tag: HTMLElement, val: [string, wordInfo], colors: string[],transparency_change: boolean){
   // Highlight by modifying the innerHTML
-  let htmls = tag.innerText;
+  let htmls = tag.innerHTML;
   let txt = val[0];
-  let re = new RegExp(txt, 'g');
-  let newHtml = htmls.replace(re,
-    `<mark class="FurMark_${txt}" style="
+  const marked = `<mark class="FurMark_${txt}" style="
     background-color: rgba(${gradientColors(colors, transparency_change, val[1].familiarity)});
-    ">${txt}</mark>`);
-  tag.innerHTML = newHtml;
+    ">${txt}</mark>`
+  tag.innerHTML = replaceTextInHTML(htmls, txt, marked);
   // console.log(newHtml);
 
-  const marks = tag.getElementsByClassName("FurMark_" + txt);
+
+}
+
+function insert_panels(tag: HTMLElement, val: [string, wordInfo]){
+  const marks = tag.getElementsByClassName(`FurMark_${val[0]}`);
   for (let i = 0; i < marks.length; i++){
+    console.log(val[1].word);
+
     marks[i].addEventListener('mouseover', () => {
-      console.log(val[1]);
+      console.log("Hovered: ", val[1].word);
+
       FurPost('get_info', val[1].word).then((info)=>{
         insert_panel(marks[i] as HTMLElement, info);
       });
@@ -125,13 +138,14 @@ function insert_panel(element: HTMLElement, info: wordInfo){
 
   panel.style.position = 'absolute';
   panel.style.overflow = 'hidden';
-  panel.style.width = '46em';
-  panel.style.height = '28em';
+  panel.style.width = '35em';
+  panel.style.height = '20em';
   panel.style.zIndex = '999';
   panel.style.border = '0.18em solid skyblue';
   panel.style.borderRadius = '1em';
   panel.style.top = `${rect.y + window.scrollY + element.offsetHeight}px`;
-  panel.style.left = `${rect.left + window.scrollX}px`;
+  panel.style.left = `min(${rect.left + window.scrollX}px, 100vw - 35em)`;
+
   document.body.appendChild(panel);
 
   panel.onload = () => panel.contentWindow?.postMessage(['setup', info, window.ip_addr], '*');
