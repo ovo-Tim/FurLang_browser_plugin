@@ -40,9 +40,8 @@ jobs:
 
       - name: Install Dependencies
         run: |
-          pnpm install -g @vue/cli
-          pnpm install -g @vue/cli-service
-          pnpm install -g @vue/cli-plugin-babel
+          pnpm install @vue/cli
+          pnpm install @vue/cli-service
           pnpm install
 
       - name: Build
