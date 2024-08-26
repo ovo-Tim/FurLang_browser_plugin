@@ -1,7 +1,11 @@
-# WXT + Vue 3
+# Furry Language Browser Plug-in
+Download [release](https://github.com/ovo-Tim/FurLang_browser_plugin/releases) and install the zip file to your browser. Support Firefox and Chromium browser.
 
-This template should help get you started developing with Vue 3 in WXT.
-
-## Recommended IDE Setup
-
-- [VS Code](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).
+## Contributing
+It's my first time writing code in Typescript, so feel free to give me any suggestions.
+### Build
+```bash
+pnpm install
+pnpm build_panel
+pnpm zip # or `pnpm dev` for debug
+```
