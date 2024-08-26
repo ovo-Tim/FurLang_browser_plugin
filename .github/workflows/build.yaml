@@ -47,6 +47,7 @@ jobs:
           pnpm install -g @vue/cli-plugin-unit-jest
           pnpm install -g @vue/cli-plugin-vuex
           pnpm install -g @vue/cli-plugin-typescript
+          pnpm install -g vue-cli-plugin-mdb5
           pnpm install
 
       - name: Build
