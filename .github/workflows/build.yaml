@@ -42,6 +42,7 @@ jobs:
         run: |
           pnpm install -g @vue/cli
           pnpm install -g @vue/cli-service
+          pnpm install -g @vue/cli-plugin-babel
           pnpm install
 
       - name: Build
