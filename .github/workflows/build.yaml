@@ -42,12 +42,13 @@ jobs:
         run: |
           pnpm install
           pnpm install -g @vue/cli
+          pnpm install -g @vue/cli-service
 
       - name: Build
         run: |
-          npm run build_panel
-          npm run zip
-          npm run zip:firefox
+          pnpm build_panel
+          pnpm zip
+          pnpm zip:firefox
 
       - name: Release
         run: |
