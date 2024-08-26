@@ -27,6 +27,11 @@
     "vue-color": "^2.8.1"
   },
   "devDependencies": {
+    "@vue/cli":"5.0.8",
+    "@vue/cli-plugin-babel": "5.0.8",
+    "@vue/cli-plugin-eslint": "5.0.8",
+    "@vue/cli-plugin-typescript": "5.0.8",
+    "@vue/cli-service": "5.0.8",
     "@wxt-dev/module-vue": "^1.0.0",
     "typescript": "^5.4.5",
     "vue-tsc": "^2.0.21",

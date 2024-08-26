@@ -37,14 +37,6 @@ jobs:
 
       - name: Install Dependencies
         run: |
-          pnpm install -g @vue/cli
-          pnpm install -g @vue/cli-service
-          pnpm install -g @vue/cli-plugin-babel
-          pnpm install -g @vue/cli-plugin-eslint
-          pnpm install -g @vue/cli-plugin-unit-jest
-          pnpm install -g @vue/cli-plugin-vuex
-          pnpm install -g @vue/cli-plugin-typescript
-          pnpm install -g vue-cli-plugin-mdb5
           pnpm install
 
       - name: Build
