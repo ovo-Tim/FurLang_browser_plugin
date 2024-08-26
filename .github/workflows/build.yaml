@@ -22,10 +22,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
 
   build:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ubuntu-latest
     permissions:
       contents: write
     needs: create
