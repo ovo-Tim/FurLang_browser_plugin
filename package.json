@@ -29,7 +29,6 @@
   "devDependencies": {
     "@vue/cli":"5.0.8",
     "@vue/cli-plugin-babel": "5.0.8",
-    "@vue/cli-plugin-eslint": "5.0.8",
     "@vue/cli-plugin-typescript": "5.0.8",
     "vue-cli-plugin-mdb5": "2.1.0",
     "@vue/cli-service": "5.0.8",
