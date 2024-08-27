@@ -1,5 +1,5 @@
 {
-  "name": "FurLang browser plug-in",
+  "name": "furlang-browser-plug-in",
   "description": "A browser plug-in works with FurLang server, can provide some useful functions for language learners.",
   "private": true,
   "version": "0.0.0",
